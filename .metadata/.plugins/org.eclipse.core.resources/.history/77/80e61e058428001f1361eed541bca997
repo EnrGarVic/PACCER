@@ -1,0 +1,12 @@
+package main;
+
+import DataBase.GameResult;
+
+public class MainClass {
+
+	public static void main(String[] args) {
+		new Game();
+		   GameResult.insertWinner("Player1");
+	}
+
+}

@@ -1,0 +1,52 @@
+package multijugador;
+
+
+import java.io.*;
+import java.net.*;
+
+import jugadores.Jugador1;
+import jugadores.Jugador2;
+
+import main.Game;
+
+public class Servidor {
+    private Game game;
+    private int port = 5005;
+    private Jugador2 clientPlayer;
+    private Jugador1 serverPlayer;
+
+
+    public Servidor(Game game) {
+        this.game = game;
+        this.serverPlayer = game.getPlayer1();
+        this.clientPlayer = game.getPlayer2();
+    }
+
+    public void start() {
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
+            System.out.println("Server is listening on port " + port);
+            Socket socket = serverSocket.accept();
+            System.out.println("Client connected");
+            
+            game.startGame();
+
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+            while (true) {
+
+                String serverMessage = serverPlayer.serialize() + game.getTimeLeft() ;
+                out.println(serverMessage);
+
+                String clientMessage = in.readLine();
+                if (clientMessage != null) {
+                	clientPlayer.deserialize(clientMessage);
+                } else {
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Server exception: " + e.getMessage());
+        }
+    }
+}

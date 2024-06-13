@@ -1,0 +1,91 @@
+package main;
+
+import javax.swing.JPanel;
+import javax.swing.border.Border;
+
+import componentes.ImageButton;
+import utils.LoadSave;
+
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+
+import static main.Game.GAME_HEIGHT;
+import static main.Game.GAME_WIDTH;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+
+// Clase que representa el panel del menú
+public class MenuPanel extends JPanel {
+    private Game game; // Instancia del juego
+	private BufferedImage background, logo;
+
+    // Constructor para inicializar con el juego
+    public MenuPanel(Game game) {
+        this.game = game;
+		background = LoadSave.getSpriteAtlas(LoadSave.MENU_BACKGROUND);
+		logo = LoadSave.getSpriteAtlas(LoadSave.LOGO);
+        setLayout(null);
+        
+        ImageIcon startButton = new ImageIcon("/start.png");
+        Image originalImage = startButton.getImage();
+        Image resizedImage = originalImage.getScaledInstance(410 / 2, 121 / 2, Image.SCALE_SMOOTH);
+        startButton = new ImageIcon(resizedImage);
+        
+        
+        JButton start_BTN = new JButton();
+        start_BTN.setBorderPainted(false);
+        start_BTN.setBorder(null);
+        start_BTN.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent arg0) {
+        		game.startGame();
+        	}
+        });
+        start_BTN.setContentAreaFilled(false);
+        start_BTN.setFocusPainted(false); 
+        start_BTN.setIcon(startButton);
+        start_BTN.setBounds(277, 600, 291, 92);
+        add(start_BTN);
+        
+        JButton Player1_BTN = new JButton("PLAYER 1");
+        Player1_BTN.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent arg0) {
+        	}
+        });
+        Player1_BTN.setBounds(329, 704, 186, 38);
+        add(Player1_BTN);
+        
+        JButton Player2_BTN = new JButton("PLAYER 2");
+        Player2_BTN.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent arg0) {
+        	}
+        });
+        Player2_BTN.setBounds(329, 760, 186, 38);
+        add(Player2_BTN);
+      
+        setPanelSize();
+      
+      
+    }
+    // Método para establecer el tamaño del panel
+    private void setPanelSize() {
+        Dimension size = new Dimension(GAME_WIDTH, GAME_HEIGHT);
+        setPreferredSize(size);
+        System.out.println("Size :" + " " + GAME_WIDTH + " | " + GAME_HEIGHT);
+    }
+
+	@Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        g.drawImage(background, 0, 0 ,GAME_HEIGHT, GAME_WIDTH, null);
+		g.drawImage(logo, 175, 170, 500, 500, null);
+    }
+}

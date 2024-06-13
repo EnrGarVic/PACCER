@@ -1,0 +1,102 @@
+package teclado;
+
+import java.awt.event.KeyEvent;
+
+import java.awt.event.KeyListener;
+import main.Game;
+import main.GamePanel;
+
+// Clase que maneja las entradas del teclado, implementa KeyListener
+public class InputsTeclado implements KeyListener {
+    private GamePanel gamePanel;
+    private Game game;
+
+    // Constructor para inicializar con el panel del juego
+    public InputsTeclado(GamePanel gamePanel, Game game) {
+        this.gamePanel = gamePanel;
+        this.game = game;
+    }
+
+    // Método que maneja las teclas presionadas
+    @Override
+    public void keyPressed(KeyEvent e) {
+    	if (game.getIsServer()) {
+    		switch (e.getKeyCode()) {
+    
+            case KeyEvent.VK_UP:
+                gamePanel.getGame().getPlayer1().setUp(true);
+                break;
+            case KeyEvent.VK_DOWN:
+                gamePanel.getGame().getPlayer1().setDown(true);
+                break;
+            case KeyEvent.VK_LEFT:
+                gamePanel.getGame().getPlayer1().setLeft(true);
+                break;
+            case KeyEvent.VK_RIGHT:
+                gamePanel.getGame().getPlayer1().setRight(true);
+                break;
+            }
+    	}
+    	else if (!game.getIsServer()) {
+    		switch (e.getKeyCode()) {
+    		
+            case KeyEvent.VK_UP:
+                gamePanel.getGame().getPlayer2().setUp(true);
+                break;
+            case KeyEvent.VK_DOWN:
+                gamePanel.getGame().getPlayer2().setDown(true);
+                break;
+            case KeyEvent.VK_LEFT:
+                gamePanel.getGame().getPlayer2().setLeft(true);
+                break;
+            case KeyEvent.VK_RIGHT:
+                gamePanel.getGame().getPlayer2().setRight(true);
+                break;
+            }
+    	}
+        
+    }
+
+    // Método que maneja las teclas soltadas
+    @Override
+    public void keyReleased(KeyEvent e) {
+    	if (game.getIsServer()) {
+    		switch (e.getKeyCode()) {
+            case KeyEvent.VK_UP:
+                gamePanel.getGame().getPlayer1().setUp(false);
+                break;
+            case KeyEvent.VK_DOWN:
+                gamePanel.getGame().getPlayer1().setDown(false);
+                break;
+            case KeyEvent.VK_LEFT:
+                gamePanel.getGame().getPlayer1().setLeft(false);
+                break;
+            case KeyEvent.VK_RIGHT:
+                gamePanel.getGame().getPlayer1().setRight(false);
+                break;
+            }
+    	}
+    	else if (!game.getIsServer()){
+    		switch (e.getKeyCode()) {
+            case KeyEvent.VK_UP:
+                gamePanel.getGame().getPlayer2().setUp(false);
+                break;
+            case KeyEvent.VK_DOWN:
+                gamePanel.getGame().getPlayer2().setDown(false);
+                break;
+            case KeyEvent.VK_LEFT:
+                gamePanel.getGame().getPlayer2().setLeft(false);
+                break;
+            case KeyEvent.VK_RIGHT:
+                gamePanel.getGame().getPlayer2().setRight(false);
+                break;
+            }
+    	}
+        
+    }
+
+    @Override
+    public void keyTyped(KeyEvent arg0) {
+        // No implementado
+    }
+}

@@ -1,0 +1,75 @@
+package main;
+
+import javax.swing.JPanel;
+import javax.swing.border.Border;
+
+import componentes.ImageButton;
+import utils.LoadSave;
+
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+
+import static main.Game.GAME_HEIGHT;
+import static main.Game.GAME_WIDTH;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+
+// Clase que representa el panel del menú
+public class MenuPanel extends JPanel {
+    private Game game; // Instancia del juego
+	private BufferedImage background, logo;
+
+    // Constructor para inicializar con el juego
+    public MenuPanel(Game game) {
+        this.game = game;
+		background = LoadSave.getSpriteAtlas(LoadSave.MENU_BACKGROUND);
+		logo = LoadSave.getSpriteAtlas(LoadSave.LOGO);
+        setLayout(null);
+        
+        ImageIcon startButton = new ImageIcon("/home/kikegv/OneDrive/ProyectoFinal/Paccer/res/start2.png");
+        Image originalImage = startButton.getImage();
+        Image resizedImage = originalImage.getScaledInstance(410 / 2, 121 / 2, Image.SCALE_SMOOTH);
+        startButton = new ImageIcon(resizedImage);
+        
+        
+        JButton btnNewButton = new JButton();
+        btnNewButton.setBorderPainted(false);
+        btnNewButton.setBorder(null);
+        btnNewButton.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent arg0) {
+        		game.startGame();
+        	}
+        });
+        btnNewButton.setContentAreaFilled(false);
+        btnNewButton.setFocusPainted(false); 
+        btnNewButton.setIcon(startButton);
+        btnNewButton.setBounds(278, 672, 291, 92);
+        add(btnNewButton);
+      
+        setPanelSize();
+      
+      
+    }
+    // Método para establecer el tamaño del panel
+    private void setPanelSize() {
+        Dimension size = new Dimension(GAME_WIDTH, GAME_HEIGHT);
+        setPreferredSize(size);
+        System.out.println("Size :" + " " + GAME_WIDTH + " | " + GAME_HEIGHT);
+    }
+
+	@Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        g.drawImage(background, 0, 0 ,GAME_HEIGHT, GAME_WIDTH, null);
+		g.drawImage(logo, 175, 170, 500, 500, null);
+    }
+}

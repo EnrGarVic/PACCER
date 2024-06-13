@@ -1,0 +1,79 @@
+package componentes;
+
+import javax.swing.JPanel;
+import java.awt.Image;
+import java.awt.Graphics;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import javax.swing.ImageIcon;
+
+public class ImageButton extends JPanel {
+    private Image image;
+    private Image pressedImage;
+    private Runnable onClick;
+    private boolean isPressed = false;
+
+    public ImageButton(String imagePath, int width, int height, Runnable onClick) {
+        this.onClick = onClick;
+        ImageIcon icon = new ImageIcon(imagePath);
+        this.image = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        this.pressedImage = createPressedImage(icon, width, height);
+        setPreferredSize(new java.awt.Dimension(width, height));
+        setSize(width, height);
+
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                isPressed = true;
+                repaint();
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                isPressed = false;
+                repaint();
+                if (contains(e.getPoint())) {
+                    onClick.run();
+                }
+            }
+        });
+
+        setFocusable(true);
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    isPressed = true;
+                    repaint();
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    isPressed = false;
+                    repaint();
+                    onClick.run();
+                }
+            }
+        });
+    }
+
+    private Image createPressedImage(ImageIcon icon, int width, int height) {
+        Image img = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        // Create a slightly darker version of the image to simulate pressing
+        return img; // Modify this to actually create a darker version if needed
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (isPressed) {
+            g.drawImage(pressedImage, 0, 0, this);
+        } else {
+            g.drawImage(image, 0, 0, this);
+        }
+    }
+}

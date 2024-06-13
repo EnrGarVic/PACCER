@@ -1,0 +1,107 @@
+package main;
+
+import javax.swing.JPanel;
+
+import multijugador.Cliente;
+import multijugador.Servidor;
+
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import utils.LoadSave;
+
+public class PlayerSelectionPanel extends JPanel {
+    private Game game;
+    private BufferedImage background, logo;
+    private Servidor servidor;
+    private Cliente cliente;
+    private JButton player1_BTN;
+    private JButton player2_BTN;
+    private String user1Name;
+    private String user2Name;
+
+    public PlayerSelectionPanel(Game game, String user1) {
+        this.game = game;
+        this.user1Name = user1;
+        background = LoadSave.getSpriteAtlas(LoadSave.DIA);
+        logo = LoadSave.getSpriteAtlas(LoadSave.LOGO);
+        setLayout(null);
+
+        // Botón Player 1
+        player1_BTN = new JButton("Player 1");
+        player1_BTN.setBounds(329, 674, 186, 38);
+        player1_BTN.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                handlePlayer1();
+            }
+        });
+        add(player1_BTN);
+
+        // Botón Player 2
+        player2_BTN = new JButton("Player 2");
+        player2_BTN.setBounds(329, 724, 186, 38);
+        player2_BTN.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+                handlePlayer2();
+            }
+        });
+        add(player2_BTN);
+
+        setPanelSize();
+    }
+
+    private void setPanelSize() {
+        Dimension size = new Dimension(Game.GAME_WIDTH, Game.GAME_HEIGHT);
+        setPreferredSize(size);
+        System.out.println("Size :" + " " + Game.GAME_WIDTH + " | " + Game.GAME_HEIGHT);
+    }
+
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        g.drawImage(background, 0, 0, getWidth(), getHeight(), null);
+        g.drawImage(logo, 175, 170, 500, 500, null);
+    }
+
+    private void handlePlayer1() {
+        // Lógica para manejar el botón Player 1
+        System.out.println("Player 1 seleccionado");
+        game.setIsServer(true);
+        startServer();
+    }
+
+    private void handlePlayer2() {
+        // Lógica para manejar el botón Player 2
+        System.out.println("Player 2 seleccionado");
+        startClient();
+    }
+
+    private void startServer() {
+        Thread serverThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                servidor = new Servidor(game);
+                servidor.start();
+            }
+        });
+        serverThread.start();
+        // Iniciar el juego como servidor (player1)
+        game.startGame(user1Name, user2Name);
+    }
+
+    private void startClient() {
+        Thread clientThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                cliente = new Cliente(game);
+                cliente.start();
+            }
+        });
+        clientThread.start();
+        // Iniciar el juego como cliente (player2)
+        game.startGame(user1Name, user2Name);
+    }
+}

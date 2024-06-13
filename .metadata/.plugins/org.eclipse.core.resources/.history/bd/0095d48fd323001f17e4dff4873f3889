@@ -1,0 +1,46 @@
+package multijugador;
+
+import java.io.*;
+import java.net.*;
+import jugadores.Jugador1;
+import jugadores.Jugador2;
+import main.Game;
+
+public class Cliente {
+    private Game game;
+    private String serverAddress = "localhost";
+    private int serverPort = 5005;
+    private Jugador2 player2;
+    private Jugador1 player1;
+
+    public Cliente(Game game) {
+        this.game = game;
+        this.player1 = game.getPlayer1();
+        this.player2 = game.getPlayer2();
+    }
+
+    public void start() {
+        try (Socket socket = new Socket(serverAddress, serverPort)) {
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+
+            while (true) {
+                String clientMessage = player2.serialize();
+                out.println(clientMessage);
+
+                String serverMessage = in.readLine();
+                if (serverMessage != null) {
+                    if (serverMessage.equals("RESTART")) {
+                        game.restart();
+                    } else {
+                        player1.deserialize(serverMessage);
+                    }
+                } else {
+                    break;
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Client exception: " + e.getMessage());
+        }
+    }
+}

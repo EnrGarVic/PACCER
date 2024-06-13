@@ -1,0 +1,67 @@
+package main;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class RankingPanel extends JFrame {
+
+    private static final long serialVersionUID = 1L;
+    private JPanel contentPane;
+    private JTable table;
+
+    public RankingPanel(Game game) {
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setBounds(100, 100, 450, 300);
+        contentPane = new JPanel();
+        contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+        setContentPane(contentPane);
+        contentPane.setLayout(null);
+
+        JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setBounds(10, 11, 414, 239);
+        contentPane.add(scrollPane);
+
+        table = new JTable();
+        table.setModel(new DefaultTableModel(
+            new Object[][] {},
+            new String[] {
+                "Username", "Wins"
+            }
+        ));
+        scrollPane.setViewportView(table);
+
+        loadRankingData();
+    }
+
+    private void loadRankingData() {
+        String url = "jdbc:mysql://localhost:3306/login";
+        String user = "root";
+        String pass = "4231";
+        
+        String query = "SELECT winner, COUNT(winner) AS wins FROM games GROUP BY winner ORDER BY wins DESC";
+
+        try (Connection conn = DriverManager.getConnection(url, user, pass);
+             PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            DefaultTableModel model = (DefaultTableModel) table.getModel();
+            while (rs.next()) {
+                String username = rs.getString("winner");
+                int wins = rs.getInt("wins");
+                model.addRow(new Object[]{username, wins});
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
